@@ -1,3 +1,3 @@
 # goldmark-math
 
-copy from https://github.com/graemephi/goldmark-qjs-katex
+copy from https://github.dev/kingreatwill/goldmark-katex
