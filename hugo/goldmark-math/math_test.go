@@ -58,12 +58,12 @@ func TestMath(t *testing.T) {
 		},
 		{
 			d:   "latex in em",
-			in:  "_x_ $_x_$\n  ",
-			out: "<p><em>x</em> $_x_$</p>",
+			in:  "_x_\n\n$_x_$\n\n$x_xx_x$\n\n $\\bf{f}_{1} $\\bf{f}_{1}",
+			out: "<p><em>x</em></p>\n<p>$_x_$</p>\n<p>$x_xx_x$</p>\n<p>$\\bf{f}_{1} $\\bf{f}_{1}</p>",
 		},
 		{
 			d:   "latex in code",
-			in:  "`_x_`  `$_x_$`\n  ",
+			in:  "`_x_`  `$_x_$`\n",
 			out: "<p><code>_x_</code>  <code>$_x_$</code></p>",
 		},
 	}
