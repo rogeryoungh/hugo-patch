@@ -1,0 +1,76 @@
+From 2c69a3dbd06b55141aa698a6af84529fb0d20925 Mon Sep 17 00:00:00 2001
+From: rogeryoungh <rogeryoungh@foxmail.com>
+Date: Sat, 24 Dec 2022 21:07:45 +0800
+Subject: [PATCH] update: add goldmark-math
+
+---
+ go.mod                                    | 3 +++
+ markup/goldmark/convert.go                | 6 ++++++
+ markup/goldmark/goldmark_config/config.go | 2 ++
+ 3 files changed, 11 insertions(+)
+
+diff --git a/go.mod b/go.mod
+index 6e7c1258..6b8e860b 100644
+--- a/go.mod
++++ b/go.mod
+@@ -119,6 +119,7 @@ require (
+ 	golang.org/x/oauth2 v0.0.0-20220411215720-9780585627b5 // indirect
+ 	golang.org/x/sys v0.3.0 // indirect
+ 	golang.org/x/xerrors v0.0.0-20220411194840-2f41105eb62f // indirect
++	goldmark-math v0.1.0 // indirect
+ 	google.golang.org/appengine v1.6.7 // indirect
+ 	google.golang.org/genproto v0.0.0-20220426171045-31bebdecfb46 // indirect
+ 	google.golang.org/grpc v1.46.0 // indirect
+@@ -127,3 +128,5 @@ require (
+ )
+ 
+ go 1.18
++
++replace goldmark-math v0.1.0 => ../goldmark-math/
+diff --git a/markup/goldmark/convert.go b/markup/goldmark/convert.go
+index a179cd23..57917065 100644
+--- a/markup/goldmark/convert.go
++++ b/markup/goldmark/convert.go
+@@ -31,6 +31,8 @@ import (
+ 	"github.com/yuin/goldmark/renderer"
+ 	"github.com/yuin/goldmark/renderer/html"
+ 	"github.com/yuin/goldmark/text"
++
++	math "goldmark-math"
+ )
+ 
+ const (
+@@ -141,6 +143,10 @@ func newMarkdown(pcfg converter.ProviderConfig) goldmark.Markdown {
+ 		extensions = append(extensions, attributes.New())
+ 	}
+ 
++	if cfg.Extensions.LaTeX {
++		extensions = append(extensions, math.LaTeX)
++	}
++
+ 	md := goldmark.New(
+ 		goldmark.WithExtensions(
+ 			extensions...,
+diff --git a/markup/goldmark/goldmark_config/config.go b/markup/goldmark/goldmark_config/config.go
+index ff0b6bbe..d2a0350e 100644
+--- a/markup/goldmark/goldmark_config/config.go
++++ b/markup/goldmark/goldmark_config/config.go
+@@ -31,6 +31,7 @@ var Default = Config{
+ 		Linkify:         true,
+ 		LinkifyProtocol: "https",
+ 		TaskList:        true,
++		LaTeX:            false,
+ 	},
+ 	Renderer: Renderer{
+ 		Unsafe: false,
+@@ -64,6 +65,7 @@ type Extensions struct {
+ 	Linkify         bool
+ 	LinkifyProtocol string
+ 	TaskList        bool
++	LaTeX           bool
+ }
+ 
+ type Renderer struct {
+-- 
+2.39.0
+
