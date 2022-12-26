@@ -1,4 +1,4 @@
-name: github pages
+name: hugo deploy
 
 on:
   push:
@@ -26,7 +26,11 @@ jobs:
           fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
 
       - name: Apply patch
-        run: cd hugo/hugo && git apply ../../patch/20221224-update-add-goldmark-math.patch
+        run: |
+          cd hugo/hugo
+          git apply --check ../../patch/20221224-update-add-goldmark-math.patch -v 
+          git apply ../../patch/20221224-update-add-goldmark-math.patch -v
+          cd -
       
       - uses: actions/setup-go@v3
         with:
@@ -70,23 +74,14 @@ jobs:
   release:
     needs: [build]
     runs-on: ubuntu-latest
+    steps:
       - name: Setup | Artifacts
         uses: actions/download-artifact@v3
-
-      - uses: "marvinpinto/action-automatic-releases@latest"
-        with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "latest"
-          prerelease: true
-          title: "Development Build"
-          files: |
-            hugo/hugo/hugo-windows-amd64.exe
-            hugo/hugo/hugo-linux-amd64
 
       - name: Build | Add Artifacts to Release
         uses: softprops/action-gh-release@v1
         with:
           prerelease: true
-          files: hugo-*
+          files: hugo-*/hugo-*
           tag_name: "latest"
           name: "Development Build"
