@@ -45,7 +45,7 @@ jobs:
         if: matrix.os == 'windows-latest'
         run: |
           cd hugo/hugo
-          go build -ldflags '-s -w --extldflags "-static -fpic"' -v -o hugo.exe --tags extended
+          go build -ldflags '-s -w --extldflags "-static"' -v -o hugo.exe --tags extended
           cd -
     
       - name: Build [-nix]
