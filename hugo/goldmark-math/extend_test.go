@@ -46,8 +46,8 @@ func TestMath(t *testing.T) {
 			out: `<p>$1+2$</p>`,
 		},
 		{
-			d:  "latex display",
-			in: "$$\n1+2\n$$",
+			d:   "latex display",
+			in:  "$$\n1+2\n$$",
 			out: "<p>\\[\n1+2\n\\]</p>",
 		},
 		{
@@ -65,6 +65,26 @@ func TestMath(t *testing.T) {
 			d:   "latex in code",
 			in:  "`_x_`  `$_x_$`\n",
 			out: "<p><code>_x_</code>  <code>$_x_$</code></p>",
+		},
+		{
+			d:   "latex display 2",
+			in:  "$$ 1+2 $$",
+			out: "<p>\\[ 1+2 \\]</p>",
+		},
+		{
+			d:   "latex tr",
+			in:  "\\$  1 + 2$ 1+2 $",
+			out: "<p>&dollar;  1 + 2$ 1+2 $</p>",
+		},
+		{
+			d:   "lots of inline",
+			in:  "$x1$ \\$x2\\$ `$x3$` $x4$ $\nx5$ $x6$",
+			out: "<p>$x1$ &dollar;x2&dollar; <code>$x3$</code> $x4$ $\nx5$ $x6$</p>",
+		},
+		{
+			d:   "end with $",
+			in:  "$$x1$",
+			out: "<p>$$x1$</p>",
 		},
 	}
 
