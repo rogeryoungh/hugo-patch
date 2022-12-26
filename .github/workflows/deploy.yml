@@ -7,32 +7,71 @@ on:
   pull_request:
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            name: hugo-extended-linux-amd64.tar.gz
+          - os: windows-latest
+            name: hugo-extended-windows-amd64.zip
+    runs-on: ${{ matrix.os }}
+    continue-on-error: true
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: true  # Fetch Hugo themes (true OR recursive)
           fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
 
       - name: Apply patch
         run: cd hugo/hugo && git apply ../../patch/20221224-update-add-goldmark-math.patch
-        
+      
       - uses: actions/setup-go@v3
         with:
           go-version: '>=1.17.0'
-      
-      - run: cd hugo/hugo && go build -ldflags '-s -w --extldflags "-static -fpic"' -v -o hugo-linux-amd64 --tags extended
-        env:
-          CGO_ENABLED: 0
-          GOOS: linux
-          GOARCH: amd64
-      
-      - run: cd hugo/hugo && go build -ldflags '-s -w --extldflags "-static -fpic"' -v -o hugo-windows-amd64.exe --tags extended
-        env:
-          CGO_ENABLED: 0
-          GOOS: windows
-          GOARCH: amd64
+    
+      - name: Build [Windows]
+        if: matrix.os == 'windows-latest'
+        run: |
+          cd hugo/hugo
+          go build -ldflags '-s -w --extldflags "-static -fpic"' -v -o hugo.exe --tags extended
+          cd -
+    
+      - name: Build [-nix]
+        if: matrix.os != 'windows-latest'
+        run: |
+          cd hugo/hugo
+          go build -ldflags '-s -w --extldflags "-static -fpic"' -v -o hugo --tags extended
+          cd -
+
+      - name: Zip [Windows]
+        if: matrix.os == 'windows-latest'
+        run: |
+          cd hugo/hugo
+          7z a ${{ matrix.name }} hugo.exe
+          cd -
+
+      - name: Zip [-nix]
+        if: matrix.os != 'windows-latest'
+        run: |
+          cd hugo/hugo
+          tar czvf ${{ matrix.name }} hugo
+          cd -
+
+      - name: Release | Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.name }}
+          path: hugo/hugo/${{ matrix.name }}
+
+
+  release:
+    needs: [build]
+    runs-on: ubuntu-latest
+      - name: Setup | Artifacts
+        uses: actions/download-artifact@v3
 
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
@@ -43,3 +82,11 @@ jobs:
           files: |
             hugo/hugo/hugo-windows-amd64.exe
             hugo/hugo/hugo-linux-amd64
+
+      - name: Build | Add Artifacts to Release
+        uses: softprops/action-gh-release@v1
+        with:
+          prerelease: true
+          files: hugo-*
+          tag_name: "latest"
+          name: "Development Build"
