@@ -8,7 +8,6 @@ import (
 	"github.com/yuin/goldmark/util"
 )
 
-
 type MathBlock struct {
 	ast.BaseBlock
 }
@@ -31,7 +30,6 @@ func (n *MathBlock) Kind() ast.NodeKind {
 func (n *MathBlock) IsRaw() bool {
 	return true
 }
-
 
 type mathJaxBlockParser struct {
 }

@@ -24,7 +24,7 @@ func TestMath_One(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, "<p>\\[\n1+2\n\\]</p>", strings.TrimSpace(string(out)))
+	assert.Equal(t, "<p> $$\n1+2\n$$ </p>", strings.TrimSpace(string(out)))
 }
 
 func TestMath(t *testing.T) {
@@ -43,12 +43,12 @@ func TestMath(t *testing.T) {
 		{
 			d:   "latex inline",
 			in:  "$1+2$",
-			out: `<p>$1+2$</p>`,
+			out: `<p> $1+2$ </p>`,
 		},
 		{
 			d:   "latex display",
 			in:  "$$\n1+2\n$$",
-			out: "<p>\\[\n1+2\n\\]</p>",
+			out: "<p> $$\n1+2\n$$ </p>",
 		},
 		{
 			// this input previously triggered a panic in block.go
@@ -59,7 +59,7 @@ func TestMath(t *testing.T) {
 		{
 			d:   "latex in em",
 			in:  "_x_\n\n$_x_$\n\n$x_xx_x$\n\n $\\bf{f}_{1} $\\bf{f}_{1}",
-			out: "<p><em>x</em></p>\n<p>$_x_$</p>\n<p>$x_xx_x$</p>\n<p>$\\bf{f}_{1} $\\bf{f}_{1}</p>",
+			out: "<p><em>x</em></p>\n<p> $_x_$ </p>\n<p> $x_xx_x$ </p>\n<p> $\\bf{f}_{1} $ \\bf{f}_{1}</p>",
 		},
 		{
 			d:   "latex in code",
@@ -69,22 +69,22 @@ func TestMath(t *testing.T) {
 		{
 			d:   "latex display 2",
 			in:  "$$ 1+2 $$",
-			out: "<p>\\[ 1+2 \\]</p>",
+			out: "<p> $$ 1+2 $$ </p>",
 		},
 		{
 			d:   "latex tr",
 			in:  "\\$  1 + 2$ 1+2 $",
-			out: "<p>&dollar;  1 + 2$ 1+2 $</p>",
+			out: "<p><span>$</span>  1 + 2 $ 1+2 $ </p>",
 		},
 		{
 			d:   "lots of inline",
 			in:  "$x1$ \\$x2\\$ `$x3$` $x4$ $\nx5$ $x6$",
-			out: "<p>$x1$ &dollar;x2&dollar; <code>$x3$</code> $x4$ $\nx5$ $x6$</p>",
+			out: "<p> $x1$  <span>$</span>x2<span>$</span> <code>$x3$</code>  $x4$   $\nx5$   $x6$ </p>",
 		},
 		{
 			d:   "end with $",
 			in:  "$$x1$",
-			out: "<p>$$x1$</p>",
+			out: "<p>$ $x1$ </p>", // FIXME :)
 		},
 	}
 

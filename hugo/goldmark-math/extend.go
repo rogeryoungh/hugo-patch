@@ -73,8 +73,9 @@ func (e *latex) Extend(m goldmark.Markdown) {
 		util.Prioritized(&MathParser{}, 502),
 	))
 	m.Renderer().AddOptions(renderer.WithNodeRenderers(
-		util.Prioritized(&EscapeDollarRenderer{"&dollar;"}, 500),
-		util.Prioritized(&InlineMathRenderer{"$", "$"}, 501),
-		util.Prioritized(&DisplayMathRenderer{"\\[", "\\]"}, 502),
+		util.Prioritized(&EscapeDollarRenderer{"<span>$</span>"}, 500),
+		// make ToC happy
+		util.Prioritized(&InlineMathRenderer{" ", " "}, 501),
+		util.Prioritized(&DisplayMathRenderer{" ", " "}, 502),
 	))
 }
