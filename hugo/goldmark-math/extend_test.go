@@ -86,6 +86,11 @@ func TestMath(t *testing.T) {
 			in:  "$$x1$",
 			out: "<p>$ $x1$ </p>", // FIXME :)
 		},
+		{
+			d:   "latex with tab",
+			in:  "$$\n\tx\n$$",
+			out: "<p> $$\n\tx\n$$ </p>",
+		},
 	}
 
 	for i, tc := range tests {

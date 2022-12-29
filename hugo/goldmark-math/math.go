@@ -67,7 +67,8 @@ func (s *MathParser) Parse(parent ast.Node, block text.Reader, pc parser.Context
 			}
 		}
 		node := &InlineMathNode{}
-		seg := text.NewSegment(seg0.Start, seg0.Start+end+1)
+		_, seg := block.Position()
+		seg = text.NewSegment(seg0.Start, seg.Start+seg.Padding)
 		node.AppendChild(node, ast.NewRawTextSegment(seg))
 		return node
 	} else if beg == 2 {
@@ -96,7 +97,8 @@ func (s *MathParser) Parse(parent ast.Node, block text.Reader, pc parser.Context
 			}
 		}
 		node := &DisplayMathNode{}
-		seg := text.NewSegment(seg0.Start, seg0.Start+end+2)
+		_, seg := block.Position()
+		seg = text.NewSegment(seg0.Start, seg.Start+seg.Padding)
 		node.AppendChild(node, ast.NewRawTextSegment(seg))
 		return node
 	}
